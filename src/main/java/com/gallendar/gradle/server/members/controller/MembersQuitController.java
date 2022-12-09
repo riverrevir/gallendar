@@ -18,7 +18,6 @@ public class MembersQuitController {
 
     @DeleteMapping("/quit")
     public ResponseEntity<?> memberQuitById(@RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token){
-        log.info("회원 탈퇴 요청");
         return quitMemberService.quitMemberById(token);
     }
 }

@@ -1,6 +1,7 @@
 package com.gallendar.gradle.server.members.domain;
 
 import com.gallendar.gradle.server.global.auditing.BaseTimeEntity;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 
 public class Members extends BaseTimeEntity {
     @Id
@@ -23,20 +24,18 @@ public class Members extends BaseTimeEntity {
     @Column
     private String password;
 
-    @Enumerated (EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-
-
     @Builder
-    public Members(String id, String email, String password, MemberRole role){
-
+    public Members(String id, String email, String password, MemberRole role) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.role = role;
     }
-    public void changePassword(String password){
-        this.password=password;
+
+    public void changePassword(String password) {
+        this.password = password;
     }
 }

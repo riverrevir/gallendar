@@ -26,6 +26,4 @@ public class CreateAuthNum {
         String authNum = key.toString();
         return authNum;
     }
-
-
 }
