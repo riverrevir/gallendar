@@ -3,6 +3,7 @@ package com.gallendar.gradle.server.members.service;
 import com.gallendar.gradle.server.board.entity.Board;
 import com.gallendar.gradle.server.board.repository.BoardRepository;
 import com.gallendar.gradle.server.board.repository.BoardRepositoryCustomImpl;
+import com.gallendar.gradle.server.common.CustomException;
 import com.gallendar.gradle.server.global.auth.jwt.JwtUtils;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.members.domain.MembersRepository;
@@ -21,6 +22,8 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.gallendar.gradle.server.common.ErrorCode.MEMBER_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -33,9 +36,9 @@ public class QuitMemberService {
     private final JwtUtils jwtUtils;
     @Transactional
     public ResponseEntity<?> quitMemberById(String token) {
-        String memberId=jwtUtils.getMemberIdFromToken(token);
-        Members members = membersRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException());
-        log.info("게시글 삭제");
+        final String memberId=jwtUtils.getMemberIdFromToken(token);
+        Members members = membersRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
         List<Board> boards = boardRepositoryCustom.findAllBoardById(memberId);
         List<String> tagMember=new ArrayList<>();
         boards.forEach(board -> {
@@ -47,13 +50,12 @@ public class QuitMemberService {
             });
             boardRepository.delete(board);
         });
-        log.info("탈퇴한 회원이 태그한 태그멤버 변경");
+
         tagMember.forEach(t->{
             Tags tags=tagsRepository.findByTagsMember(memberId);
             tags.changeTagsMember(TagStatus.quitMember);
         });
 
-        log.info("회원 삭제");
         membersRepository.delete(members);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(HttpHeaders.AUTHORIZATION, null);

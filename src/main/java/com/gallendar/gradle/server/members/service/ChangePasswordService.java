@@ -1,16 +1,17 @@
 package com.gallendar.gradle.server.members.service;
 
+import com.gallendar.gradle.server.common.CustomException;
 import com.gallendar.gradle.server.global.auth.encoder.CommonEncoder;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.members.domain.MembersRepository;
 import com.gallendar.gradle.server.members.dto.ChangePasswordRequest;
-import com.gallendar.gradle.server.members.dto.ChangePasswordResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+
+import static com.gallendar.gradle.server.common.ErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -20,12 +21,8 @@ public class ChangePasswordService {
     private final CommonEncoder commonEncoder;
 
     @Transactional
-    public ChangePasswordResponse passwordChangeById(ChangePasswordRequest changePasswordRequest) {
-        Members members = membersRepository.findById(changePasswordRequest.getId()).orElseThrow(() -> {
-            log.info("해당 아이디로 가입된 회원을 찾지 못하였습니다.");
-            return new IllegalArgumentException();
-        });
+    public void passwordChangeById(ChangePasswordRequest changePasswordRequest) {
+        Members members = membersRepository.findById(changePasswordRequest.getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         members.changePassword(commonEncoder.encode(changePasswordRequest.getPassword()));
-        return new ChangePasswordResponse(true);
     }
 }

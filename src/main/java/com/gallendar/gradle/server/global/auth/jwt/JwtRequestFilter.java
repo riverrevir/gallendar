@@ -1,5 +1,6 @@
 package com.gallendar.gradle.server.global.auth.jwt;
 
+import com.gallendar.gradle.server.common.CustomException;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.members.domain.MembersRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static com.gallendar.gradle.server.common.ErrorCode.INVALID_AUTH_TOKEN;
 
 @Component
 @RequiredArgsConstructor
@@ -37,7 +40,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // 토큰을 가져오면 검증을 한다.
         if (memberId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Members members = membersRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("올바르지 않은 사용자입니다."));
+            Members members = membersRepository.findById(memberId).orElseThrow(() -> new CustomException(INVALID_AUTH_TOKEN));
 
             // 토큰이 유효한 경우 수동으로 인증을 설정하도록 스프링 시큐리티를 구성한다.
             if (jwtUtils.validateToken(jwtToken)) {

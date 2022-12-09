@@ -1,7 +1,6 @@
 package com.gallendar.gradle.server.members.service;
 
-import com.gallendar.gradle.server.exception.Message;
-import com.gallendar.gradle.server.exception.Status;
+import com.gallendar.gradle.server.common.CustomException;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.members.domain.MembersRepository;
 import com.gallendar.gradle.server.members.domain.MembersRepositoryCustomImpl;
@@ -9,12 +8,12 @@ import com.gallendar.gradle.server.members.dto.FindIdByEmailResponse;
 import com.gallendar.gradle.server.members.dto.MemberSearchResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.gallendar.gradle.server.common.ErrorCode.EMAIL_NOT_FOUND;
 
 @Service
 @AllArgsConstructor
@@ -29,10 +28,7 @@ public class MemberSearchService {
     }
 
     public FindIdByEmailResponse idFindByEmail(String email) {
-        Members members = membersRepository.findByEmail(email).orElseThrow(() -> {
-            log.info("해당 이메일로 가입한 유저 찾기 실패");
-            return new IllegalArgumentException();
-        });
+        Members members = membersRepository.findByEmail(email).orElseThrow(() -> new CustomException(EMAIL_NOT_FOUND));
         return new FindIdByEmailResponse(members.getId());
     }
 }
