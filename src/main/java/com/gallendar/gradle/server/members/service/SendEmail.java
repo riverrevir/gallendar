@@ -1,8 +1,6 @@
 package com.gallendar.gradle.server.members.service;
 
-import com.gallendar.gradle.server.common.CustomException;
-import com.gallendar.gradle.server.exception.BusinessLogicException;
-import com.gallendar.gradle.server.exception.ExceptionCode;
+import com.gallendar.gradle.server.global.common.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
@@ -12,8 +10,8 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import static com.gallendar.gradle.server.common.ErrorCode.AUTH_NUMBER_MISS_MATCH;
-import static com.gallendar.gradle.server.common.ErrorCode.INTERNAL_ERROR;
+import static com.gallendar.gradle.server.global.common.ErrorCode.AUTH_NUMBER_MISS_MATCH;
+import static com.gallendar.gradle.server.global.common.ErrorCode.INTERNAL_ERROR;
 
 
 @RequiredArgsConstructor

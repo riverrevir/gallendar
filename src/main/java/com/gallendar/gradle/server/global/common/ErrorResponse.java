@@ -1,4 +1,4 @@
-package com.gallendar.gradle.server.common;
+package com.gallendar.gradle.server.global.common;
 
 import lombok.Builder;
 import lombok.Getter;

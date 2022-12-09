@@ -1,7 +1,7 @@
 package com.gallendar.gradle.server.members.service;
 
 
-import com.gallendar.gradle.server.common.CustomException;
+import com.gallendar.gradle.server.global.common.CustomException;
 import com.gallendar.gradle.server.global.auth.encoder.CommonEncoder;
 import com.gallendar.gradle.server.members.domain.MembersRepository;
 import com.gallendar.gradle.server.members.dto.SignupRequestDto;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-import static com.gallendar.gradle.server.common.ErrorCode.DUPLICATE_RESOURCE;
+import static com.gallendar.gradle.server.global.common.ErrorCode.DUPLICATE_RESOURCE;
 
 
 @Service

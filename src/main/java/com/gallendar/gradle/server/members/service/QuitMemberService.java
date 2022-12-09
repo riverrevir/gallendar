@@ -3,7 +3,7 @@ package com.gallendar.gradle.server.members.service;
 import com.gallendar.gradle.server.board.entity.Board;
 import com.gallendar.gradle.server.board.repository.BoardRepository;
 import com.gallendar.gradle.server.board.repository.BoardRepositoryCustomImpl;
-import com.gallendar.gradle.server.common.CustomException;
+import com.gallendar.gradle.server.global.common.CustomException;
 import com.gallendar.gradle.server.global.auth.jwt.JwtUtils;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.members.domain.MembersRepository;
@@ -22,7 +22,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.gallendar.gradle.server.common.ErrorCode.MEMBER_NOT_FOUND;
+import static com.gallendar.gradle.server.global.common.ErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

@@ -1,10 +1,9 @@
 package com.gallendar.gradle.server.global.auth.jwt;
 
-import com.gallendar.gradle.server.common.CustomException;
+import com.gallendar.gradle.server.global.common.CustomException;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.members.domain.MembersRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -17,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.gallendar.gradle.server.common.ErrorCode.INVALID_AUTH_TOKEN;
+import static com.gallendar.gradle.server.global.common.ErrorCode.INVALID_AUTH_TOKEN;
 
 @Component
 @RequiredArgsConstructor

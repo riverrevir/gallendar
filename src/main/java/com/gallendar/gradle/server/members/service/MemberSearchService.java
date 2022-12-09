@@ -1,6 +1,6 @@
 package com.gallendar.gradle.server.members.service;
 
-import com.gallendar.gradle.server.common.CustomException;
+import com.gallendar.gradle.server.global.common.CustomException;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.members.domain.MembersRepository;
 import com.gallendar.gradle.server.members.domain.MembersRepositoryCustomImpl;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.gallendar.gradle.server.common.ErrorCode.EMAIL_NOT_FOUND;
+import static com.gallendar.gradle.server.global.common.ErrorCode.EMAIL_NOT_FOUND;
 
 @Service
 @AllArgsConstructor

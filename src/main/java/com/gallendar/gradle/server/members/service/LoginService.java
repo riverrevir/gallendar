@@ -1,6 +1,6 @@
 package com.gallendar.gradle.server.members.service;
 
-import com.gallendar.gradle.server.common.CustomException;
+import com.gallendar.gradle.server.global.common.CustomException;
 import com.gallendar.gradle.server.global.auth.encoder.CommonEncoder;
 import com.gallendar.gradle.server.global.auth.jwt.JwtUtils;
 import com.gallendar.gradle.server.members.domain.Members;
@@ -9,10 +9,9 @@ import com.gallendar.gradle.server.members.dto.LoginRequest;
 import com.gallendar.gradle.server.members.dto.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.gallendar.gradle.server.common.ErrorCode.MEMBER_NOT_FOUND;
+import static com.gallendar.gradle.server.global.common.ErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

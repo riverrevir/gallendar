@@ -7,7 +7,7 @@ import com.gallendar.gradle.server.board.repository.BoardRepository;
 import com.gallendar.gradle.server.board.repository.BoardRepositoryCustomImpl;
 import com.gallendar.gradle.server.category.domain.Category;
 import com.gallendar.gradle.server.category.domain.CategoryRepository;
-import com.gallendar.gradle.server.common.CustomException;
+import com.gallendar.gradle.server.global.common.CustomException;
 import com.gallendar.gradle.server.global.auth.jwt.JwtUtils;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.members.domain.MembersRepository;
@@ -29,8 +29,8 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.gallendar.gradle.server.common.ErrorCode.MEMBER_NOT_FOUND;
-import static com.gallendar.gradle.server.common.ErrorCode.POST_NOT_FOUND;
+import static com.gallendar.gradle.server.global.common.ErrorCode.MEMBER_NOT_FOUND;
+import static com.gallendar.gradle.server.global.common.ErrorCode.POST_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
