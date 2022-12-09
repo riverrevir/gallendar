@@ -16,7 +16,6 @@ public class BoardCountService {
 
     public BoardCountResponse countBoardById(String token, int year, int month, int day) {
         String memberId = jwtUtils.getMemberIdFromToken(token);
-        log.info("선택된 날짜의 게시글 전체 개수 및 태그 상태의 게시글 개수 계산");
         int boardCount = membersRepositoryCustom.CountBoardByMember(memberId, year, month, day);
         int tagBoardCount = membersRepositoryCustom.CountBoardByTag(memberId, year, month, day);
         int count = boardCount - tagBoardCount;
@@ -27,7 +26,6 @@ public class BoardCountService {
          * 1 0            1            0                   1 불가능
          * 1 1            2            1                   1 불가능
          * **/
-        log.info("게시글 개수 : " + boardCount + " - " + tagBoardCount + " = " + count);
         boolean flag = true;
         if (count > 0) {
             flag = false;
