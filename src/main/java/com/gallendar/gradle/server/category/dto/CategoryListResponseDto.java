@@ -8,8 +8,6 @@ import lombok.Getter;
 public class CategoryListResponseDto {
 
     private String categoryTitle;
-
-
     public static CategoryListResponseDto from(String categoryTitle) {
 
         return CategoryListResponseDto.builder()
