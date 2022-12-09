@@ -30,7 +30,6 @@ public class SignupRequestDto {
 
     @Builder
     public SignupRequestDto( String id, String email, String password ){
-
         this.id = id ;
         this.email = email ;
         this.password = password;
@@ -41,7 +40,7 @@ public class SignupRequestDto {
                 .id(id)
                 .email(email)
                 .password(password)
+                .role(MemberRole.USER)
                 .build();
     }
-
 }
