@@ -1,5 +1,6 @@
 package com.gallendar.gradle.server.members.service;
 
+import com.gallendar.gradle.server.common.CustomException;
 import com.gallendar.gradle.server.exception.BusinessLogicException;
 import com.gallendar.gradle.server.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+
+import static com.gallendar.gradle.server.common.ErrorCode.AUTH_NUMBER_MISS_MATCH;
+import static com.gallendar.gradle.server.common.ErrorCode.INTERNAL_ERROR;
 
 
 @RequiredArgsConstructor
@@ -56,31 +60,26 @@ public class SendEmail {
     }
 
     public void send(String email) throws Exception {
-        log.info("해당 이메일 주소로 메일에 담길 내용 생성");
         MimeMessage message = createEmailForm(email);
         try {
-            log.info("redis 에 인증번호, 이메일 주소, 유효시간 저장한 뒤 메일 전송");
             redisUtil.setDataExpire(authNum, email, 60 * 5L);
             emailSender.send(message);
         } catch (MailException mailException) {
-            mailException.printStackTrace();
-            throw new IllegalArgumentException();
+            log.error("이메일 발송 에러");
+            throw new CustomException(INTERNAL_ERROR);
         }
     }
 
-    public String verifyEmail(String authNum, String email) {
-        log.info("유저가 입력한 이메일로부터 받은 인증번호가 맞는지 확인");
+    public void verifyEmail(String authNum, String email) {
         String memberEmail = redisUtil.getData(authNum);
-
         if (memberEmail == null) {
-            throw new BusinessLogicException(ExceptionCode.AUTH_NUMBER_MISS_MATCH);
+            log.error("인증 요청 된 이메일 없음");
+            throw new CustomException(AUTH_NUMBER_MISS_MATCH);
         } else if (!memberEmail.equals(email)) {
-            throw new BusinessLogicException(ExceptionCode.AUTH_NUMBER_MISS_MATCH);
+            log.error("잘못된 인증 번호");
+            throw new CustomException(AUTH_NUMBER_MISS_MATCH);
         } else {
-            log.info("redis 에서 해당 유저의 인증번호 관련 정보 삭제");
             redisUtil.deleteData(authNum);
-            return "SUCCESSFUL!";
-
         }
     }
 }
