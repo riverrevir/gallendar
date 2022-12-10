@@ -14,7 +14,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class S3UploadService{
+public class S3UploadService implements PhotoService{
     @Value("${cloud.aws.s3.bucket}")
     private final String bucket;
     private final AmazonS3 amazonS3;
