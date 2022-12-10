@@ -34,7 +34,6 @@ public class TagsController {
     })
     @GetMapping
     public List<NotificationResponse> findTagsById(@RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token) {
-        log.info("태그 알림 요청");
         return notificationService.tagsFindById(token);
     }
 

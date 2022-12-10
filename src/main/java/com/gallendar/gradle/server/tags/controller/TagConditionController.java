@@ -26,7 +26,6 @@ public class TagConditionController {
     @ApiOperation(value = "태그 조건", notes = "태그 할 유저의 해당 날짜에 게시글의 개수를 반환")
     @GetMapping("/count/{id}/{year}/{month}/{day}")
     public CountBoardResponse CountBoardByTagMember(@PathVariable String id, @PathVariable Integer year, @PathVariable Integer month, @PathVariable Integer day) {
-        log.info("태그 조건 요청");
         return tagService.BoardCountByTagMember(id, year, month, day);
     }
 }

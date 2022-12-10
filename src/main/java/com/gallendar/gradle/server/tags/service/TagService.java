@@ -17,7 +17,6 @@ public class TagService {
     @Transactional
     public CountBoardResponse BoardCountByTagMember(String id, Integer year, Integer month, Integer day) {
         int count = membersRepositoryCustom.CountBoardByTag(id, year, month, day);
-        log.info("태그 된 게시글 개수 : "+count);
         boolean flag=true;
         if(count>0){
             flag=false;
