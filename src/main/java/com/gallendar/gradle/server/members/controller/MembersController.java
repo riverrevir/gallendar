@@ -2,10 +2,7 @@ package com.gallendar.gradle.server.members.controller;
 
 import com.gallendar.gradle.server.exception.BusinessLogicException;
 import com.gallendar.gradle.server.members.dto.*;
-import com.gallendar.gradle.server.members.service.ChangePasswordService;
-import com.gallendar.gradle.server.members.service.CreateMemberService;
-import com.gallendar.gradle.server.members.service.MemberSearchService;
-import com.gallendar.gradle.server.members.service.QuitMemberService;
+import com.gallendar.gradle.server.members.service.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -33,6 +30,7 @@ public class MembersController {
     private final CreateMemberService createMemberService;
     private final ChangePasswordService changePasswordService;
     private final MemberSearchService memberSearchService;
+    private final DuplicateCheckService duplicateCheckService;
 
     /**
      * 아이디 찾기
@@ -66,8 +64,8 @@ public class MembersController {
      */
     @ApiOperation(value = "아이디 중복 확인", notes = "입력한 아이디가 이미 가입되어있는지 확인 할 수 있다.")
     @GetMapping("/duplicate/id/{id}")
-    public ResponseEntity checkMemberId(@PathVariable @NotBlank String id) {
-        createMemberService.checkMemberIdDuplication(id);
+    public ResponseEntity DuplicateCheckMemberById(@PathVariable @NotBlank String id) {
+        duplicateCheckService.checkDuplicateMemberById(id);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -79,8 +77,8 @@ public class MembersController {
      */
     @ApiOperation(value = "이메일 중복 확인", notes = "입력한 이메일이 이미 가입되어있는지 확인 할 수 있다.")
     @GetMapping("/duplicate/email/{email}")
-    public ResponseEntity checkMemberEmail(@PathVariable @NotBlank String email) {
-        createMemberService.checkMemberEmailDuplication(email);
+    public ResponseEntity DuplicateCheckMemberByEmail(@PathVariable @NotBlank String email) {
+        duplicateCheckService.checkDuplicateMemberByEmail(email);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -92,7 +90,7 @@ public class MembersController {
      */
     @ApiOperation(value = "회원가입", notes = "가입되어 있지 않은 아이디와 이메일 그리고 이메일 인증을 통해 회원가입을 할 수 있다.")
     @PostMapping
-    public ResponseEntity postMember(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+    public ResponseEntity createMember(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         createMemberService.createMember(signupRequestDto);
         return new ResponseEntity(HttpStatus.CREATED);
     }

@@ -22,34 +22,20 @@ public class CreateMemberService {
 
     private final MembersRepository membersRepository;
     private final CommonEncoder commonEncoder;
-
-    public void checkMemberIdDuplication(String id) {
-        boolean flag = membersRepository.existsById(id);
-        if (flag) {
-            throw new CustomException(DUPLICATE_RESOURCE);
-        }
-    }
-
-
-    public void checkMemberEmailDuplication(String email) {
-        boolean flag = membersRepository.existsByEmail(email);
-        if (flag) {
-            throw new CustomException(DUPLICATE_RESOURCE);
-        }
-    }
-
     @Transactional
     public void createMember(SignupRequestDto signupRequestDto) {
         final String id = signupRequestDto.getId();
         final String email = signupRequestDto.getEmail();
-        if (membersRepository.existsByEmail(email)) {
+
+        checkDuplicateMember(id,email);
+
+        final String password= commonEncoder.encode(signupRequestDto.getPassword());
+        signupRequestDto.setPassword(password);
+        membersRepository.save(signupRequestDto.toEntity());
+    }
+    private void checkDuplicateMember(String id,String email){
+        if(membersRepository.existsById(id)||membersRepository.existsByEmail(email)){
             throw new CustomException(DUPLICATE_RESOURCE);
-        } else if (membersRepository.existsById(id)) {
-            throw new CustomException(DUPLICATE_RESOURCE);
-        } else {
-            String password = signupRequestDto.getPassword();
-            signupRequestDto.setPassword(commonEncoder.encode(password));
-            membersRepository.save(signupRequestDto.toEntity());
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.gallendar.gradle.server.members.controller;
 
-import com.gallendar.gradle.server.exception.BusinessLogicException;
-import com.gallendar.gradle.server.members.dto.AuthNumDto;
+import com.gallendar.gradle.server.members.dto.AuthNumberRequest;
 import com.gallendar.gradle.server.members.dto.EmailRequest;
 import com.gallendar.gradle.server.members.dto.LoginRequest;
 import com.gallendar.gradle.server.members.dto.LoginResponse;
@@ -71,13 +70,13 @@ public class AuthenticationController {
     /**
      * 인증번호 검증
      *
-     * @param authNumDto
+     * @param authNumberRequest
      * @return
      */
     @ApiOperation(value = "인증번호 검증", notes = "입력한 인증번호가 맞는지 확인한다.")
     @PostMapping("/email/verify")
-    public ResponseEntity getEmailAuthenticationNumber(@Valid @RequestBody AuthNumDto authNumDto) {
-        mailService.checkAuthNum(authNumDto.getAuthNum(), authNumDto.getEmail());
+    public ResponseEntity AuthEmailByAuthNumber(@Valid @RequestBody AuthNumberRequest authNumberRequest) {
+        mailService.emailAuthByAuthNumber(authNumberRequest);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

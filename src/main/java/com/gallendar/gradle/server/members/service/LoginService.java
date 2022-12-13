@@ -18,14 +18,14 @@ import static com.gallendar.gradle.server.global.common.ErrorCode.MEMBER_NOT_FOU
 @Slf4j
 public class LoginService {
     private final JwtUtils jwtUtils;
-    private final MembersRepository membersRepository;
-    private final CommonEncoder commonEncoder;
+    private final MemberSearchImpl memberSearch;
+    private final AuthenticationImpl authentication;
+
 
     public LoginResponse LoginMember(LoginRequest loginRequest) {
-        Members members = membersRepository.findById(loginRequest.getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        if (!commonEncoder.matches(loginRequest.getPassword(), members.getPassword())) {
-            throw new CustomException(MEMBER_NOT_FOUND);
-        }
+        Members members = memberSearch.memberFindById(loginRequest.getId());
+        authentication.authPassword(loginRequest.getPassword(), members.getPassword());
+
         final String token = jwtUtils.generateToken(loginRequest.getId());
         return new LoginResponse(token);
     }

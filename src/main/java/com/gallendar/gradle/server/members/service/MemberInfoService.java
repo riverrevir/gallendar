@@ -1,10 +1,7 @@
 package com.gallendar.gradle.server.members.service;
 
 import com.gallendar.gradle.server.board.entity.Board;
-import com.gallendar.gradle.server.global.common.CustomException;
-import com.gallendar.gradle.server.global.auth.jwt.JwtUtils;
 import com.gallendar.gradle.server.members.domain.Members;
-import com.gallendar.gradle.server.members.domain.MembersRepository;
 import com.gallendar.gradle.server.members.dto.MemberInfoResponse;
 import com.gallendar.gradle.server.members.dto.MemberTagStatusRequest;
 import com.gallendar.gradle.server.members.dto.MemberTagStatusResponse;
@@ -19,25 +16,29 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.gallendar.gradle.server.global.common.ErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MemberInfoService {
-    private final MembersRepository membersRepository;
     private final TagsRepositoryCustomImpl tagsRepositoryCustom;
-    private final JwtUtils jwtUtils;
+    private final AuthenticationImpl authentication;
 
     public MemberInfoResponse myInfoGetById(String token) {
-        String memberId = jwtUtils.getMemberIdFromToken(token);
-        Members members = membersRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        Members members = authentication.getMemberByToken(token);
         return new MemberInfoResponse(members.getId(), members.getEmail());
     }
 
     public Page<MemberTagStatusResponse> mySharedStatusGetById(String token, MemberTagStatusRequest memberTagStatusRequest, Pageable pageable) {
-        String memberId = jwtUtils.getMemberIdFromToken(token);
-        List<Board> tagStatus = tagsRepositoryCustom.getSharedStatusById(memberId, memberTagStatusRequest, pageable);
+        Members members = authentication.getMemberByToken(token);
+
+        List<Board> tagStatus = tagsRepositoryCustom.getSharedStatusById(members.getId(), memberTagStatusRequest, pageable);
+        List<MemberTagStatusResponse> list = setMemberTagStatusResponse(tagStatus);
+
+        return new PageImpl<>(list);
+    }
+
+    private List<MemberTagStatusResponse> setMemberTagStatusResponse(List<Board> tagStatus) {
         List<MemberTagStatusResponse> list = new ArrayList<>();
         tagStatus.forEach(board -> {
             String to = board.getMembers().getId();
@@ -46,6 +47,6 @@ public class MemberInfoService {
                 list.add(MemberTagStatusResponse.from(to, title, boardTags.getTags().getTagsMember(), boardTags.getTags().getStatus(), boardTags.getTags().getUpdatedAt()));
             });
         });
-        return new PageImpl<>(list);
+        return list;
     }
 }

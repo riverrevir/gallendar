@@ -1,34 +1,33 @@
 package com.gallendar.gradle.server.members.service;
 
 import com.gallendar.gradle.server.global.common.CustomException;
+import com.gallendar.gradle.server.global.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import static com.gallendar.gradle.server.global.common.ErrorCode.AUTH_NUMBER_MISS_MATCH;
-import static com.gallendar.gradle.server.global.common.ErrorCode.INTERNAL_ERROR;
-
 
 @RequiredArgsConstructor
-@Component
-@Slf4j
-public class SendEmail {
-
-    private final JavaMailSender emailSender;
+public class GoogleMailImpl implements GoogleMail {
+    private final String authNum = CreateAuthNum.createNum();
+    private final JavaMailSender mailSender;
     private final RedisUtil redisUtil;
-    public static final String authNum = CreateAuthNum.createNum();
 
-    public MimeMessage createEmailForm(String email) throws MessagingException {
-        log.info("메일에 담길 내용들 설정 시작");
-        String setFrom = "5kamjas.gallender@gmail.com";
-        String title = "Gallendar 인증 번호";
+    @Override
+    public void send(MimeMessage message,String email) throws Exception {
+        mailSender.send(message);
+        redisUtil.setDataExpire(authNum, email, 60 * 5L);
+    }
 
-        MimeMessage message = emailSender.createMimeMessage();
+    @Override
+    public MimeMessage createForm(String email) throws MessagingException {
+        final String setFrom = "5kamjas.gallender@gmail.com";
+        final String title = "Gallendar 인증 번호";
+
+        MimeMessage message = mailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, email);
         message.setSubject(title);
         message.setFrom(setFrom);
@@ -57,27 +56,15 @@ public class SendEmail {
         return message;
     }
 
-    public void send(String email) throws Exception {
-        MimeMessage message = createEmailForm(email);
-        try {
-            redisUtil.setDataExpire(authNum, email, 60 * 5L);
-            emailSender.send(message);
-        } catch (MailException mailException) {
-            log.error("이메일 발송 에러");
-            throw new CustomException(INTERNAL_ERROR);
-        }
-    }
-
-    public void verifyEmail(String authNum, String email) {
-        String memberEmail = redisUtil.getData(authNum);
-        if (memberEmail == null) {
-            log.error("인증 요청 된 이메일 없음");
+    @Override
+    public void verifyAuthNumber(String authNumber,String email) {
+        final String emailValue= redisUtil.getData(authNumber);
+        if(emailValue==null||emailValue.equals("")){
             throw new CustomException(AUTH_NUMBER_MISS_MATCH);
-        } else if (!memberEmail.equals(email)) {
-            log.error("잘못된 인증 번호");
-            throw new CustomException(AUTH_NUMBER_MISS_MATCH);
-        } else {
-            redisUtil.deleteData(authNum);
         }
+        if(!emailValue.equals(email)){
+            throw new CustomException(AUTH_NUMBER_MISS_MATCH);
+        }
+        redisUtil.deleteData(authNumber);
     }
 }
