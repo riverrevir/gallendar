@@ -32,6 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'junit:junit:4.13.2'
+    implementation 'org.projectlombok:lombok:1.18.22'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -57,9 +58,10 @@ dependencies {
 	implementation group: 'com.google.code.gson', name: 'gson'
 
 	// test 및 REST DOCS 관련
-	testImplementation 'com.h2database:h2:1.4.199'
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-	testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('org.junit.jupiter:junit-jupiter')
+    testImplementation('org.junit.jupiter:junit-jupiter-api')
+    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine')
 
 
 	//email
