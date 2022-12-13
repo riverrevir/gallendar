@@ -64,6 +64,6 @@ public class MemberInfoController {
     @ApiOperation(value = "유저 찾기", notes = "유저의 id 값으로 요청이 들어오면 해당 요청이 포함된 모든 결과를 리스트로 반환한다.")
     @GetMapping
     public List<MemberSearchResponse> searchMemberById(@RequestParam(value = "separatorKey") @NotBlank String id) {
-        return memberSearchService.MemberSearchById(id);
+        return memberSearchService.memberSearchById(id);
     }
 }

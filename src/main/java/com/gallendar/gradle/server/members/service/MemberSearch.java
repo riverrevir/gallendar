@@ -4,4 +4,6 @@ import com.gallendar.gradle.server.members.domain.Members;
 
 public interface MemberSearch {
     Members memberFindById(String userId);
+
+    Members memberFindByEmail(String email);
 }
