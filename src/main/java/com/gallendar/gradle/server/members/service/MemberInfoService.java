@@ -33,6 +33,12 @@ public class MemberInfoService {
         Members members = authentication.getMemberByToken(token);
 
         List<Board> tagStatus = tagsRepositoryCustom.getSharedStatusById(members.getId(), memberTagStatusRequest, pageable);
+        List<MemberTagStatusResponse> list = setMemberTagStatusResponse(tagStatus);
+
+        return new PageImpl<>(list);
+    }
+
+    private List<MemberTagStatusResponse> setMemberTagStatusResponse(List<Board> tagStatus) {
         List<MemberTagStatusResponse> list = new ArrayList<>();
         tagStatus.forEach(board -> {
             String to = board.getMembers().getId();
@@ -41,6 +47,6 @@ public class MemberInfoService {
                 list.add(MemberTagStatusResponse.from(to, title, boardTags.getTags().getTagsMember(), boardTags.getTags().getStatus(), boardTags.getTags().getUpdatedAt()));
             });
         });
-        return new PageImpl<>(list);
+        return list;
     }
 }
