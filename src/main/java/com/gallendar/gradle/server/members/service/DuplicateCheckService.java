@@ -13,15 +13,15 @@ import static com.gallendar.gradle.server.global.common.ErrorCode.DUPLICATE_RESO
 public class DuplicateCheckService {
     private final DuplicateCheckMemberImpl duplicateCheckMember;
 
-    public void CheckDuplicateMemberById(String id) {
-        CheckDuplicateMembers(duplicateCheckMember.isMemberId(id));
+    public void checkDuplicateMemberById(String id) {
+        checkDuplicateMembers(duplicateCheckMember.isMemberId(id));
     }
 
-    public void CheckDuplicateMemberByEmail(String email) {
-        CheckDuplicateMembers(duplicateCheckMember.isMemberEmail(email));
+    public void checkDuplicateMemberByEmail(String email) {
+        checkDuplicateMembers(duplicateCheckMember.isMemberEmail(email));
     }
 
-    private void CheckDuplicateMembers(boolean isMember) {
+    private void checkDuplicateMembers(boolean isMember) {
         if (isMember) throw new CustomException(DUPLICATE_RESOURCE);
     }
 }
