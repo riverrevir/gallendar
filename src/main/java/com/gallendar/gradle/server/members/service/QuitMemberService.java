@@ -28,21 +28,36 @@ import static com.gallendar.gradle.server.global.common.ErrorCode.MEMBER_NOT_FOU
 @RequiredArgsConstructor
 @Slf4j
 public class QuitMemberService {
-    private final MembersRepository membersRepository;
+    private final AuthenticationImpl authentication;
     private final BoardRepositoryCustomImpl boardRepositoryCustom;
     private final BoardRepository boardRepository;
     private final TagsRepository tagsRepository;
     private final BoardTagsRepository boardTagsRepository;
-    private final JwtUtils jwtUtils;
+    private final MembersRepository membersRepository;
+
     @Transactional
     public ResponseEntity<?> quitMemberById(String token) {
-        final String memberId=jwtUtils.getMemberIdFromToken(token);
-        Members members = membersRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        Members members = authentication.getMemberByToken(token);
 
-        List<Board> boards = boardRepositoryCustom.findAllBoardById(memberId);
-        List<String> tagMember=new ArrayList<>();
+        List<Board> boards = boardRepositoryCustom.findAllBoardById(members.getId());
+        List<String> tagMember = getTagMember(boards);
+        changeTagsMemberStatus(tagMember, members.getId());
+
+        membersRepository.delete(members);
+        HttpHeaders httpHeaders = setAuthorizationNull();
+
+        return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
+    }
+
+    private HttpHeaders setAuthorizationNull() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(HttpHeaders.AUTHORIZATION, null);
+        return httpHeaders;
+    }
+
+    private List<String> getTagMember(List<Board> boards) {
+        List<String> tagMember = new ArrayList<>();
         boards.forEach(board -> {
-            log.info(board.getBoardId().toString());
             board.getBoardTags().forEach(boardTags -> {
                 tagMember.add(boardTags.getTags().getTagsMember());
                 tagsRepository.delete(boardTags.getTags());
@@ -50,15 +65,13 @@ public class QuitMemberService {
             });
             boardRepository.delete(board);
         });
+        return tagMember;
+    }
 
-        tagMember.forEach(t->{
-            Tags tags=tagsRepository.findByTagsMember(memberId);
+    private void changeTagsMemberStatus(List<String> tagMember, String memberId) {
+        tagMember.forEach(t -> {
+            Tags tags = tagsRepository.findByTagsMember(memberId);
             tags.changeTagsMember(TagStatus.quitMember);
         });
-
-        membersRepository.delete(members);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set(HttpHeaders.AUTHORIZATION, null);
-        return new ResponseEntity<>(httpHeaders,HttpStatus.OK);
     }
 }
