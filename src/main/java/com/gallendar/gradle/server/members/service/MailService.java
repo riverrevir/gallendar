@@ -1,24 +1,25 @@
 package com.gallendar.gradle.server.members.service;
 
-import com.gallendar.gradle.server.exception.BusinessLogicException;
+import com.gallendar.gradle.server.members.dto.AuthNumberRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.mail.internet.MimeMessage;
 
 
 @RequiredArgsConstructor
 @Service
 @Slf4j
 public class MailService {
-    @Autowired
-    private final SendEmail sendEmail;
+    private GoogleMailImpl googleMail;
 
     public void sendAuthEmail(String email) throws Exception {
-        sendEmail.send(email);
+        MimeMessage message=googleMail.createForm(email);
+        googleMail.send(message,email);
     }
 
-    public void checkAuthNum(String key, String email){
-        sendEmail.verifyEmail(key, email);
+    public void emailAuthByAuthNumber(AuthNumberRequest authNumberRequest){
+        googleMail.verifyAuthNumber(authNumberRequest.getAuthNumber(),authNumberRequest.getEmail());
     }
 }

@@ -1,4 +1,4 @@
-package com.gallendar.gradle.server.members.service;
+package com.gallendar.gradle.server.global.utils;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 
 @RequiredArgsConstructor
-@Service
 public class RedisUtil {
 
     private final StringRedisTemplate stringRedisTemplate;
@@ -24,7 +23,6 @@ public class RedisUtil {
         valueOperations.set(key, value, expireDuration);
 
     }
-
     public void deleteData(String key) {
         stringRedisTemplate.delete(key);
     }
