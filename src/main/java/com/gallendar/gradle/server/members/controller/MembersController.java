@@ -2,10 +2,7 @@ package com.gallendar.gradle.server.members.controller;
 
 import com.gallendar.gradle.server.exception.BusinessLogicException;
 import com.gallendar.gradle.server.members.dto.*;
-import com.gallendar.gradle.server.members.service.ChangePasswordService;
-import com.gallendar.gradle.server.members.service.CreateMemberService;
-import com.gallendar.gradle.server.members.service.MemberSearchService;
-import com.gallendar.gradle.server.members.service.QuitMemberService;
+import com.gallendar.gradle.server.members.service.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -33,6 +30,7 @@ public class MembersController {
     private final CreateMemberService createMemberService;
     private final ChangePasswordService changePasswordService;
     private final MemberSearchService memberSearchService;
+    private final DuplicateCheckService duplicateCheckService;
 
     /**
      * 아이디 찾기
@@ -66,8 +64,8 @@ public class MembersController {
      */
     @ApiOperation(value = "아이디 중복 확인", notes = "입력한 아이디가 이미 가입되어있는지 확인 할 수 있다.")
     @GetMapping("/duplicate/id/{id}")
-    public ResponseEntity checkMemberId(@PathVariable @NotBlank String id) {
-        createMemberService.checkMemberIdDuplication(id);
+    public ResponseEntity DuplicateCheckMemberById(@PathVariable @NotBlank String id) {
+        duplicateCheckService.CheckDuplicateMemberById(id);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -79,8 +77,8 @@ public class MembersController {
      */
     @ApiOperation(value = "이메일 중복 확인", notes = "입력한 이메일이 이미 가입되어있는지 확인 할 수 있다.")
     @GetMapping("/duplicate/email/{email}")
-    public ResponseEntity checkMemberEmail(@PathVariable @NotBlank String email) {
-        createMemberService.checkMemberEmailDuplication(email);
+    public ResponseEntity DuplicateCheckMemberByEmail(@PathVariable @NotBlank String email) {
+        duplicateCheckService.CheckDuplicateMemberByEmail(email);
         return new ResponseEntity(HttpStatus.OK);
     }
 
