@@ -27,13 +27,13 @@ public class CreateMemberService {
         final String id = signupRequestDto.getId();
         final String email = signupRequestDto.getEmail();
 
-        CheckDuplicateMember(id,email);
+        checkDuplicateMember(id,email);
 
         final String password= commonEncoder.encode(signupRequestDto.getPassword());
         signupRequestDto.setPassword(password);
         membersRepository.save(signupRequestDto.toEntity());
     }
-    private void CheckDuplicateMember(String id,String email){
+    private void checkDuplicateMember(String id,String email){
         if(membersRepository.existsById(id)||membersRepository.existsByEmail(email)){
             throw new CustomException(DUPLICATE_RESOURCE);
         }
