@@ -1,10 +1,6 @@
 package com.gallendar.gradle.server.board.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gallendar.gradle.server.board.entity.Board;
-import com.gallendar.gradle.server.members.domain.Members;
-import com.gallendar.gradle.server.photo.entity.Photo;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,15 +8,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class BoardCreateRequestDto {
+public class BoardCreateRequest {
 
     @NotBlank(message = "제목을 입력하세요.")
     private String title;

@@ -2,8 +2,8 @@ package com.gallendar.gradle.server.board.controller;
 
 import com.gallendar.gradle.server.board.dto.*;
 import com.gallendar.gradle.server.board.service.BoardCountService;
+import com.gallendar.gradle.server.board.service.BoardCreateService;
 import com.gallendar.gradle.server.board.service.BoardSearchService;
-import com.gallendar.gradle.server.board.service.BoardServiceImpl;
 import com.gallendar.gradle.server.global.auth.jwt.JwtRequestFilter;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -22,21 +22,21 @@ import java.util.List;
 @RequestMapping("/boards")
 @Slf4j
 public class BoardController {
-    private final BoardServiceImpl boardService;
+    private final BoardCreateService boardCreateService;
     private final BoardSearchService boardSearchService;
     private final BoardCountService boardCountService;
 
     /**
      * 게시글 작성
      *
-     * @param requestDto
+     * @param boardCreateRequest
      * @param token
      * @return
      * @throws IOException
      */
     @PostMapping
-    public ResponseEntity save(@Validated BoardCreateRequestDto requestDto, @RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token) throws IOException {
-        boardService.save(requestDto, token);
+    public ResponseEntity save(@Validated BoardCreateRequest boardCreateRequest, @RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token) throws IOException {
+        boardCreateService.save(boardCreateRequest,token);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
