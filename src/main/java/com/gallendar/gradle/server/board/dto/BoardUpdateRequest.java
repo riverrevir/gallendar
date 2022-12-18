@@ -1,6 +1,6 @@
 package com.gallendar.gradle.server.board.dto;
 
-import lombok.Builder;
+import com.gallendar.gradle.server.board.entity.Board;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BoardUpdateRequestDto {
+public class BoardUpdateRequest {
     private String title;
     private String content;
     private String music;
@@ -23,6 +23,16 @@ public class BoardUpdateRequestDto {
     private String categoryTitle;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate created;
+
+    public Board toEntity() {
+        return Board.builder()
+                .title(title)
+                .content(content)
+                .music(music)
+                .url(url)
+                .created(created)
+                .build();
+    }
 }
 
 
