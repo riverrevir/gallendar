@@ -11,16 +11,20 @@ import javax.transaction.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TagService {
+public class TagConditionService {
     private final MembersRepositoryCustomImpl membersRepositoryCustom;
 
     @Transactional
-    public CountBoardResponse BoardCountByTagMember(String id, Integer year, Integer month, Integer day) {
+    public CountBoardResponse boardCountByTagMember(String id, Integer year, Integer month, Integer day) {
+        return new CountBoardResponse(tagAvailability(id, year, month, day));
+    }
+
+    private boolean tagAvailability(String id, Integer year, Integer month, Integer day) {
         int count = membersRepositoryCustom.CountBoardByTag(id, year, month, day);
-        boolean flag=true;
-        if(count>0){
-            flag=false;
+        boolean flag = true;
+        if (count > 0) {
+            flag = false;
         }
-        return new CountBoardResponse(flag);
+        return flag;
     }
 }
