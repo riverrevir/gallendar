@@ -2,9 +2,11 @@ package com.gallendar.gradle.server.category.service;
 
 import com.gallendar.gradle.server.board.entity.Board;
 import com.gallendar.gradle.server.board.repository.BoardRepositoryCustomImpl;
-import com.gallendar.gradle.server.category.dto.CategoryListResponseDto;
+import com.gallendar.gradle.server.category.dto.CategoryListResponse;
 
 import com.gallendar.gradle.server.global.auth.jwt.JwtUtils;
+import com.gallendar.gradle.server.members.domain.Members;
+import com.gallendar.gradle.server.members.service.AuthenticationImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,19 +20,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryService {
+    private final AuthenticationImpl authentication;
+    private final CategorySearchImpl categorySearch;
 
-    private final BoardRepositoryCustomImpl boardRepositoryCustom;
-    private final JwtUtils jwtUtils;
-
-    public List<CategoryListResponseDto> categoryList(String token) {
-        String membersId = jwtUtils.getMemberIdFromToken(token);
-        List<CategoryListResponseDto> categoryList = new ArrayList<>();
-        List<Board> boards = boardRepositoryCustom.findByCategory(membersId);
-        List<String> distinctCategory = boards.stream()
-                .map(board -> board.getCategory().getCategoryTitle()).distinct().collect(Collectors.toList());
-        distinctCategory.forEach(categoryTitle -> {
-            categoryList.add(CategoryListResponseDto.from(categoryTitle));
-        });
-        return categoryList;
+    public List<CategoryListResponse> getCategoryList(String token) {
+        Members members = authentication.getMemberByToken(token);
+        return categorySearch.getCategoryListByMemberId(members.getId());
     }
 }
