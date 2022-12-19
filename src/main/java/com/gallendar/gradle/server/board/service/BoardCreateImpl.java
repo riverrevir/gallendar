@@ -23,4 +23,13 @@ public class BoardCreateImpl implements BoardCreate{
         boardRepository.save(board);
         return board;
     }
+
+    @Override
+    public Board copy(Board board,Members members) {
+        Board copyBoard = Board.builder().title(board.getTitle()).content(board.getContent()).music(board.getMusic()).url(board.getUrl()).created(board.getCreated()).build();
+        copyBoard.setMembers(members);
+        copyBoard.setCategory(board.getCategory());
+        copyBoard.setPhoto(board.getPhoto());
+        boardRepository.save(copyBoard);
+    }
 }

@@ -3,12 +3,14 @@ package com.gallendar.gradle.server.tags.service;
 import com.gallendar.gradle.server.board.entity.Board;
 import com.gallendar.gradle.server.board.repository.BoardRepository;
 import com.gallendar.gradle.server.board.repository.BoardRepositoryCustomImpl;
+import com.gallendar.gradle.server.board.service.BoardCreateImpl;
 import com.gallendar.gradle.server.exception.Message;
 import com.gallendar.gradle.server.exception.Status;
 import com.gallendar.gradle.server.global.auth.jwt.JwtUtils;
 import com.gallendar.gradle.server.global.common.CustomException;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.members.domain.MembersRepository;
+import com.gallendar.gradle.server.members.service.AuthenticationImpl;
 import com.gallendar.gradle.server.tags.domain.*;
 import com.gallendar.gradle.server.tags.dto.NotificationResponse;
 import com.gallendar.gradle.server.tags.type.TagStatus;
@@ -28,25 +30,16 @@ import static com.gallendar.gradle.server.global.common.ErrorCode.MEMBER_NOT_FOU
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationService {
-    private final TagsRepository tagsRepository;
     private final TagsRepositoryCustomImpl tagsRepositoryCustom;
     private final BoardRepositoryCustomImpl boardRepositoryCustom;
-    private final BoardRepository boardRepository;
-    private final MembersRepository membersRepository;
-    private final BoardTagsRepository boardTagsRepository;
-    private final JwtUtils jwtUtils;
+    private final AuthenticationImpl authentication;
+    private final BoardCreateImpl boardCreate;
+    private final TagMembersImpl tagMembers;
 
     @Transactional
     public List<NotificationResponse> tagsFindById(String token) {
-        final String userId = jwtUtils.getMemberIdFromToken(token);
-        List<NotificationResponse> list = new ArrayList<>();
-        List<Tags> tags = tagsRepositoryCustom.findByTagsMember(userId);
-        tags.forEach(tags1 -> {
-            tags1.getBoardTags().forEach(boardTags -> {
-                list.add(NotificationResponse.from(boardTags));
-            });
-        });
-        return list;
+        Members members=authentication.getMemberByToken(token);
+        return tagStatusCheck(members.getId());
     }
 
     @Transactional
@@ -54,29 +47,12 @@ public class NotificationService {
         Message message = new Message();
         message.setMessage("공유가 수락되었습니다.");
         message.setStatus(Status.OK);
-        final String userId = jwtUtils.getMemberIdFromToken(token);
-        Board board = boardRepositoryCustom.findById(boardId, userId);
-        Members members = membersRepository.findById(userId).orElseThrow(() -> {
-            log.error("유저 찾기 오류 " + NotificationService.class);
-            return new CustomException(MEMBER_NOT_FOUND);
-        });
-        board.getBoardTags().forEach(boardTags -> {
-            boardTags.getTags().changeStatus(TagStatus.accept);
-        });
 
-        Board shareBoard = Board.builder().title(board.getTitle()).content(board.getContent()).music(board.getMusic()).url(board.getUrl()).created(board.getCreated()).build();
-        shareBoard.setMembers(members);
-        shareBoard.setCategory(board.getCategory());
-        shareBoard.setPhoto(board.getPhoto());
-        boardRepository.save(shareBoard);
-
-        Tags tags = Tags.builder().tagStatus(TagStatus.shared).tagsMember(board.getMembers().getId()).build();
-        tagsRepository.save(tags);
-
-        BoardTags shareBoardTags = new BoardTags();
-        shareBoardTags.setBoard(shareBoard);
-        shareBoardTags.setTags(tags);
-        boardTagsRepository.save(shareBoardTags);
+        Members members=authentication.getMemberByToken(token);
+        Board board = sharedWithTagStatusChange(boardId, members.getId());
+        Board copyBoard=boardCreate.copy(board,members);
+        Tags tags = tagMembers.save(board.getMembers().getId());
+        tagMembers.setBoardTags(copyBoard,tags);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -85,11 +61,33 @@ public class NotificationService {
         Message message = new Message();
         message.setMessage("공유가 거절되었습니다.");
         message.setStatus(Status.OK);
-        final String userId = jwtUtils.getMemberIdFromToken(token);
-        Board board = boardRepositoryCustom.findById(boardId, userId);
+        
+        Members members=authentication.getMemberByToken(token);
+        Board board = sharedWithTagStatusChange(boardId,members.getId());
+        setDenyTagStatus(board);
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+    private List<NotificationResponse> tagStatusCheck(String memberId){
+        List<NotificationResponse> list = new ArrayList<>();
+        List<Tags> tags = tagsRepositoryCustom.findByTagsMember(memberId);
+        tags.forEach(tags1 -> {
+            tags1.getBoardTags().forEach(boardTags -> {
+                list.add(NotificationResponse.from(boardTags));
+            });
+        });
+        return list;
+    }
+    private Board sharedWithTagStatusChange(Long boardId,String memberId){
+        Board board = boardRepositoryCustom.findById(boardId, memberId);
+
+        board.getBoardTags().forEach(boardTags -> {
+            boardTags.getTags().changeStatus(TagStatus.accept);
+        });
+        return board;
+    }
+    private void setDenyTagStatus(Board board){
         board.getBoardTags().forEach(boardTags -> {
             boardTags.getTags().changeStatus(TagStatus.deny);
         });
-        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }

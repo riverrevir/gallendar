@@ -32,4 +32,19 @@ public class TagMembersImpl implements TagMembers{
             });
         }
     }
+
+    @Override
+    public Tags save(String memberId) {
+        Tags tags = Tags.builder().tagStatus(TagStatus.shared).tagsMember(memberId).build();
+        tagsRepository.save(tags);
+        return tags;
+    }
+
+    @Override
+    public void setBoardTags(Board board, Tags tags) {
+        BoardTags boardTags = new BoardTags();
+        boardTags.setBoard(board);
+        boardTags.setTags(tags);
+        boardTagsRepository.save(boardTags);
+    }
 }
