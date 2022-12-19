@@ -31,5 +31,6 @@ public class BoardCreateImpl implements BoardCreate{
         copyBoard.setCategory(board.getCategory());
         copyBoard.setPhoto(board.getPhoto());
         boardRepository.save(copyBoard);
+        return copyBoard;
     }
 }
