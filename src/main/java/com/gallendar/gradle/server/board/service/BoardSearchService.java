@@ -6,6 +6,7 @@ import com.gallendar.gradle.server.board.entity.Board;
 import com.gallendar.gradle.server.board.repository.BoardRepositoryCustomImpl;
 import com.gallendar.gradle.server.global.auth.jwt.JwtUtils;
 import com.gallendar.gradle.server.members.domain.Members;
+import com.gallendar.gradle.server.members.service.AuthenticationImpl;
 import com.gallendar.gradle.server.tags.type.TagStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,37 +21,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 @Slf4j
 public class BoardSearchService {
-    private final BoardRepositoryCustomImpl boardRepositoryCustom;
-    private final JwtUtils jwtUtils;
+    private final AuthenticationImpl authentication;
+    private final BoardSearchImpl boardSearch;
 
     @Transactional
     public List<BoardSearchResponse> SearchBoardByYearAndMonthAndCategory(int year, int month, String category, String token) {
-        String memberId = jwtUtils.getMemberIdFromToken(token);
-        List<BoardSearchResponse> list = new ArrayList<>();
-        List<Board> boards = boardRepositoryCustom.findByBoard(year, month, category, memberId);
-        boards.forEach(board -> {
-            AtomicBoolean atomicBoolean= new AtomicBoolean(false);
-            board.getBoardTags().forEach(boardTags -> {
-                if(boardTags.getTags().getStatus().equals(TagStatus.shared)){
-                    atomicBoolean.set(true);
-                }
-            });
-            list.add(BoardSearchResponse.from(board, atomicBoolean.get()));
-        });
-        return list;
+        Members members = authentication.getMemberByToken(token);
+        return boardSearch.simpleSearchBoard(year, month, category, members.getId());
     }
+
     @Transactional
-    public List<BoardSearchByIdResponse> SearchBoardByBoardId(Long boardId,String token){
-        String memberId= jwtUtils.getMemberIdFromToken(token);
-        List<Board> boards=boardRepositoryCustom.findByBoardId(boardId,memberId);
-        List<BoardSearchByIdResponse> list =new ArrayList<>();
-        boards.forEach(board -> {
-            List<String> tags=new ArrayList<>();
-            board.getBoardTags().forEach(boardTags -> {
-                tags.add(boardTags.getTags().getTagsMember());
-            });
-            list.add(BoardSearchByIdResponse.from(board,tags));
-        });
-        return list;
+    public List<BoardSearchByIdResponse> SearchBoardByBoardId(Long boardId, String token) {
+        Members members = authentication.getMemberByToken(token);
+        return boardSearch.detailSearchBoardById(boardId, members.getId());
     }
 }

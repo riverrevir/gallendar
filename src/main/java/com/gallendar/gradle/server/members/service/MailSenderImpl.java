@@ -11,7 +11,7 @@ import javax.mail.internet.MimeMessage;
 import static com.gallendar.gradle.server.global.common.ErrorCode.AUTH_NUMBER_MISS_MATCH;
 
 @RequiredArgsConstructor
-public class GoogleMailImpl implements GoogleMail {
+public class MailSenderImpl implements MailSender {
     private final String authNum = CreateAuthNum.createNum();
     private final JavaMailSender mailSender;
     private final RedisUtil redisUtil;

@@ -1,9 +1,7 @@
 package com.gallendar.gradle.server.board.controller;
 
 import com.gallendar.gradle.server.board.dto.*;
-import com.gallendar.gradle.server.board.service.BoardCountService;
-import com.gallendar.gradle.server.board.service.BoardSearchService;
-import com.gallendar.gradle.server.board.service.BoardServiceImpl;
+import com.gallendar.gradle.server.board.service.*;
 import com.gallendar.gradle.server.global.auth.jwt.JwtRequestFilter;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -22,21 +20,23 @@ import java.util.List;
 @RequestMapping("/boards")
 @Slf4j
 public class BoardController {
-    private final BoardServiceImpl boardService;
+    private final BoardCreateService boardCreateService;
     private final BoardSearchService boardSearchService;
     private final BoardCountService boardCountService;
+    private final BoardUpdateService boardUpdateService;
+    private final BoardDeleteService boardDeleteService;
 
     /**
      * 게시글 작성
      *
-     * @param requestDto
+     * @param boardCreateRequest
      * @param token
      * @return
      * @throws IOException
      */
     @PostMapping
-    public ResponseEntity save(@Validated BoardCreateRequestDto requestDto, @RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token) throws IOException {
-        boardService.save(requestDto, token);
+    public ResponseEntity save(@Validated BoardCreateRequest boardCreateRequest, @RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token) throws IOException {
+        boardCreateService.save(boardCreateRequest, token);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
@@ -44,14 +44,14 @@ public class BoardController {
      * 게시글 수정
      *
      * @param boardId
-     * @param requestDto
+     * @param boardUpdateRequest
      * @param token
      * @return
      */
     @PatchMapping("/{id}")
     public ResponseEntity update(@PathVariable("id") @Positive Long boardId,
-                                 BoardUpdateRequestDto requestDto, @RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token) throws IOException {
-        boardService.update(boardId, requestDto, token);
+                                 BoardUpdateRequest boardUpdateRequest, @RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token) throws IOException {
+        boardUpdateService.update(boardId, boardUpdateRequest, token);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -64,7 +64,7 @@ public class BoardController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") Long boardId, @RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token) {
-        boardService.delete(boardId, token);
+        boardDeleteService.delete(boardId, token);
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -98,6 +98,7 @@ public class BoardController {
 
     /**
      * 게시글 작성 여부 반환
+     *
      * @param token
      * @param year
      * @param month

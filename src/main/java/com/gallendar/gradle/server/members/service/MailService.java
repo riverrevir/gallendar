@@ -12,7 +12,7 @@ import javax.mail.internet.MimeMessage;
 @Service
 @Slf4j
 public class MailService {
-    private GoogleMailImpl googleMail;
+    private MailSenderImpl googleMail;
 
     public void sendAuthEmail(String email) throws Exception {
         MimeMessage message=googleMail.createForm(email);
