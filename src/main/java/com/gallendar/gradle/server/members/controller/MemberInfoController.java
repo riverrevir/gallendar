@@ -36,7 +36,7 @@ public class MemberInfoController {
      * @return
      */
     @ApiOperation(value = "나의 정보 요청", notes = "아이디, 이메일 반환")
-    @GetMapping
+    @GetMapping("/myInfo")
     public MemberInfoResponse getMyInfoById(@RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token) {
         return memberInfoService.myInfoGetById(token);
     }

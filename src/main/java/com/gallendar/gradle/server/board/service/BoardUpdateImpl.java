@@ -7,8 +7,10 @@ import com.gallendar.gradle.server.category.domain.Category;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.photo.entity.Photo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Service
 public class BoardUpdateImpl implements BoardUpdate {
     private final BoardRepository boardRepository;
 

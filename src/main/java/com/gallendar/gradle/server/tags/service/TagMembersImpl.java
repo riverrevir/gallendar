@@ -7,10 +7,12 @@ import com.gallendar.gradle.server.tags.domain.Tags;
 import com.gallendar.gradle.server.tags.domain.TagsRepository;
 import com.gallendar.gradle.server.tags.type.TagStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @RequiredArgsConstructor
+@Service
 public class TagMembersImpl implements TagMembers{
     private final BoardTagsRepository boardTagsRepository;
     private final TagsRepository tagsRepository;

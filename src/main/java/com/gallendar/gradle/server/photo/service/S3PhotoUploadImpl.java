@@ -17,7 +17,7 @@ import java.util.UUID;
 @Service
 public class S3PhotoUploadImpl implements PhotoUpload {
     @Value("${cloud.aws.s3.bucket}")
-    private final String bucket;
+    private String bucket;
     private final AmazonS3 amazonS3;
     @Override
     public void upload(MultipartFile multipartFile) throws IOException{
