@@ -13,12 +13,13 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class TagMembersImpl implements TagMembers{
+public class TagMembersImpl implements TagMembers {
     private final BoardTagsRepository boardTagsRepository;
     private final TagsRepository tagsRepository;
+
     @Override
     public void save(List<String> tags, Board board) {
-        if(!tags.isEmpty()) {
+        if (!tags.isEmpty()) {
             tags.forEach(t -> {
                 BoardTags boardTags = new BoardTags();
                 Tags tag = Tags.builder()

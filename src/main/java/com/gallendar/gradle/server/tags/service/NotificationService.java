@@ -1,15 +1,11 @@
 package com.gallendar.gradle.server.tags.service;
 
 import com.gallendar.gradle.server.board.entity.Board;
-import com.gallendar.gradle.server.board.repository.BoardRepository;
 import com.gallendar.gradle.server.board.repository.BoardRepositoryCustomImpl;
 import com.gallendar.gradle.server.board.service.BoardCreateImpl;
 import com.gallendar.gradle.server.exception.Message;
 import com.gallendar.gradle.server.exception.Status;
-import com.gallendar.gradle.server.global.auth.jwt.JwtUtils;
-import com.gallendar.gradle.server.global.common.CustomException;
 import com.gallendar.gradle.server.members.domain.Members;
-import com.gallendar.gradle.server.members.domain.MembersRepository;
 import com.gallendar.gradle.server.members.service.AuthenticationImpl;
 import com.gallendar.gradle.server.tags.domain.*;
 import com.gallendar.gradle.server.tags.dto.NotificationResponse;
@@ -24,8 +20,6 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.gallendar.gradle.server.global.common.ErrorCode.MEMBER_NOT_FOUND;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -38,7 +32,7 @@ public class NotificationService {
 
     @Transactional
     public List<NotificationResponse> tagsFindById(String token) {
-        Members members=authentication.getMemberByToken(token);
+        Members members = authentication.getMemberByToken(token);
         return tagStatusCheck(members.getId());
     }
 
@@ -48,11 +42,11 @@ public class NotificationService {
         message.setMessage("공유가 수락되었습니다.");
         message.setStatus(Status.OK);
 
-        Members members=authentication.getMemberByToken(token);
+        Members members = authentication.getMemberByToken(token);
         Board board = sharedWithTagStatusChange(boardId, members.getId());
-        Board copyBoard=boardCreate.copy(board,members);
+        Board copyBoard = boardCreate.copy(board, members);
         Tags tags = tagMembers.save(board.getMembers().getId());
-        tagMembers.setBoardTags(copyBoard,tags);
+        tagMembers.setBoardTags(copyBoard, tags);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -61,13 +55,14 @@ public class NotificationService {
         Message message = new Message();
         message.setMessage("공유가 거절되었습니다.");
         message.setStatus(Status.OK);
-        
-        Members members=authentication.getMemberByToken(token);
-        Board board = sharedWithTagStatusChange(boardId,members.getId());
+
+        Members members = authentication.getMemberByToken(token);
+        Board board = sharedWithTagStatusChange(boardId, members.getId());
         setDenyTagStatus(board);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
-    private List<NotificationResponse> tagStatusCheck(String memberId){
+
+    private List<NotificationResponse> tagStatusCheck(String memberId) {
         List<NotificationResponse> list = new ArrayList<>();
         List<Tags> tags = tagsRepositoryCustom.findByTagsMember(memberId);
         tags.forEach(tags1 -> {
@@ -77,7 +72,8 @@ public class NotificationService {
         });
         return list;
     }
-    private Board sharedWithTagStatusChange(Long boardId,String memberId){
+
+    private Board sharedWithTagStatusChange(Long boardId, String memberId) {
         Board board = boardRepositoryCustom.findById(boardId, memberId);
 
         board.getBoardTags().forEach(boardTags -> {
@@ -85,7 +81,8 @@ public class NotificationService {
         });
         return board;
     }
-    private void setDenyTagStatus(Board board){
+
+    private void setDenyTagStatus(Board board) {
         board.getBoardTags().forEach(boardTags -> {
             boardTags.getTags().changeStatus(TagStatus.deny);
         });
