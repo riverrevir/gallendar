@@ -1,10 +1,7 @@
 package com.gallendar.gradle.server.board.controller;
 
 import com.gallendar.gradle.server.board.dto.*;
-import com.gallendar.gradle.server.board.service.BoardCountService;
-import com.gallendar.gradle.server.board.service.BoardCreateService;
-import com.gallendar.gradle.server.board.service.BoardSearchService;
-import com.gallendar.gradle.server.board.service.BoardUpdateService;
+import com.gallendar.gradle.server.board.service.*;
 import com.gallendar.gradle.server.global.auth.jwt.JwtRequestFilter;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +24,7 @@ public class BoardController {
     private final BoardSearchService boardSearchService;
     private final BoardCountService boardCountService;
     private final BoardUpdateService boardUpdateService;
+    private final BoardDeleteService boardDeleteService;
 
     /**
      * 게시글 작성
@@ -66,7 +64,7 @@ public class BoardController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") Long boardId, @RequestHeader(value = JwtRequestFilter.HEADER_KEY) String token) {
-        boardService.delete(boardId, token);
+        boardDeleteService.delete(boardId, token);
         return new ResponseEntity(HttpStatus.OK);
     }
 
