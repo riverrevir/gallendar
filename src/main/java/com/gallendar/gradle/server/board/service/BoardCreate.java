@@ -9,4 +9,5 @@ import com.gallendar.gradle.server.photo.entity.Photo;
 
 public interface BoardCreate {
     Board save(BoardCreateRequest boardCreateRequest, Members members, Category category, Photo photo);
+    Board copy(Board board,Members members);
 }

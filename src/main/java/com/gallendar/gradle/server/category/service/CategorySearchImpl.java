@@ -6,12 +6,14 @@ import com.gallendar.gradle.server.category.domain.Category;
 import com.gallendar.gradle.server.category.domain.CategoryRepository;
 import com.gallendar.gradle.server.category.dto.CategoryListResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@Service
 public class CategorySearchImpl implements CategorySearch {
     private final CategoryRepository categoryRepository;
     private final BoardRepositoryCustomImpl boardRepositoryCustom;

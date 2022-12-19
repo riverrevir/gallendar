@@ -7,8 +7,10 @@ import com.gallendar.gradle.server.category.domain.Category;
 import com.gallendar.gradle.server.members.domain.Members;
 import com.gallendar.gradle.server.photo.entity.Photo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Service
 public class BoardCreateImpl implements BoardCreate{
     private final BoardRepository boardRepository;
 
@@ -20,5 +22,14 @@ public class BoardCreateImpl implements BoardCreate{
         board.setPhoto(photo);
         boardRepository.save(board);
         return board;
+    }
+
+    @Override
+    public Board copy(Board board,Members members) {
+        Board copyBoard = Board.builder().title(board.getTitle()).content(board.getContent()).music(board.getMusic()).url(board.getUrl()).created(board.getCreated()).build();
+        copyBoard.setMembers(members);
+        copyBoard.setCategory(board.getCategory());
+        copyBoard.setPhoto(board.getPhoto());
+        boardRepository.save(copyBoard);
     }
 }

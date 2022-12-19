@@ -8,6 +8,7 @@ import com.gallendar.gradle.server.board.repository.BoardRepositoryCustomImpl;
 import com.gallendar.gradle.server.global.common.CustomException;
 import com.gallendar.gradle.server.tags.type.TagStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.gallendar.gradle.server.global.common.ErrorCode.POST_NOT_FOUND;
 
 @RequiredArgsConstructor
+@Service
 public class BoardSearchImpl implements BoardSearch {
     private final BoardRepository boardRepository;
     private final BoardRepositoryCustomImpl boardRepositoryCustom;

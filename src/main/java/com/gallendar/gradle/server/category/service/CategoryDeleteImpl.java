@@ -5,8 +5,10 @@ import com.gallendar.gradle.server.board.repository.BoardRepositoryCustomImpl;
 import com.gallendar.gradle.server.category.domain.Category;
 import com.gallendar.gradle.server.category.domain.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Service
 public class CategoryDeleteImpl implements CategoryDelete {
     private final BoardRepositoryCustomImpl boardRepositoryCustom;
     private final CategoryRepository categoryRepository;
